@@ -6,6 +6,7 @@ import './App.css';
 import Counter from './components/Count';
 import Photo from './components/Photo';
 import Album from './components/Album';
+import TodoList from './components/TodoList';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -42,6 +43,7 @@ function App() {
 
   return (
     <>
+      <TodoList name="CARDMOB" />
       <Counter title="Contador Superior" />
       <Counter initial="77" />
       <article>
