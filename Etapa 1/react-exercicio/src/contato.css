@@ -1,0 +1,10 @@
+.add {
+    display: flex;
+    flex-direction: column;
+
+}
+
+.add input {
+    margin: 8px;
+    padding: 5px;
+}
