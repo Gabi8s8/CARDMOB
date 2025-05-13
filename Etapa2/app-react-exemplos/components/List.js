@@ -20,6 +20,19 @@ class List extends Component {
                 <Text style={styles.text}>
                     Lista de itens "clicáveis"
                 </Text>
+                {
+                    this.state.names.map((item, index) => (
+                        <TouchableOpacity //area clicável
+                            key={item.id}
+                            style={styles.container}
+                            onPress={() => this.alertItemName(item)}>
+
+                            <Text style={styles.text}>
+                                {item.name}
+                            </Text>
+                        </TouchableOpacity>
+                    ))
+                }
             </View>
         )
     }
@@ -31,10 +44,10 @@ const styles = StyleSheet.create({
     container: {
         padding: 10,
         marginTop: 3,
-        backgroundColor: "#d9f9b1",
-        alignItems: "center",
+        backgroundColor: '#E6E6FA',
+        alignItems: 'center',
     },
     text: {
-        color: "4f603c"
-    }
+        color: '#191970',
+    },
 });
