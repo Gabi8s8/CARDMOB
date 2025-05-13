@@ -10,13 +10,16 @@ import {
     FlatList,
 } from 'react-native';
 
-import Inputs from './components/Inputs';
+import List from './components/List';
 
 export default function App() {
 
     return (
         <View style={styles.container}>
-            <Inputs />
+            <List />
+            <View style={styles.redBox} />
+            <View style={styles.bluebox} />
+            <View style={styles.blackbox} />
         </View>
     );
 }
@@ -29,5 +32,21 @@ const styles = StyleSheet.create({
         height: 600,
         marginTop: 150,
     },
-
+    redBox: {
+        width: 100,
+        height: 100,
+        backgroundColor: 'lightcoral',
+    },
+    bluebox: {
+        width: 100,
+        height: 100,
+        backgroundColor: 'lightblue',
+    },
+    blackbox: {
+        width: 100,
+        height: 100,
+        backgroundColor: 'lightslategrey',
+    },
 });
+
+// onPress = OnClick
