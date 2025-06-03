@@ -1,24 +1,20 @@
 {
-  "items": [
+  "items": [],
+  "compras": [
     {
-      "text": "item 1",
-      "id": "87bb"
+      "id": "6811",
+      "name": "frango",
+      "amount": 6
     },
     {
-      "text": "Item 2",
-      "id": "6a9e"
+      "name": "carne",
+      "amount": "2",
+      "id": "47ea"
     },
     {
-      "text": "item 3",
-      "id": "6bd9"
-    },
-    {
-      "id": "c10c",
-      "text": "item 4"
-    },
-    {
-      "id": "1f29",
-      "text": "item 5"
+      "name": "arroz",
+      "amount": "1",
+      "id": "5f8e"
     }
   ]
 }

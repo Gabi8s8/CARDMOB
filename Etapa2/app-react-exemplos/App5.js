@@ -16,27 +16,25 @@ const BASE_URL = 'http://10.81.205.28:3000';
 
 export default function App() {
     // CRUD em memória
-    const [shoppingList, setShoppingList] = useState([]);
-    const [name, setName] = useState('');
-    const [amount, setAmount] = useState(null);
+    const [items, setItems] = useState([]);
+    const [text, setText] = useState('');
     const [editItemId, setEditItemId] = useState(null);
-    const [editItemName, setEditItemName] = useState('');
-    const [editItemAmount, setEditItemAmount] = useState(null);
+    const [editItemText, setEditItemText] = useState('');
     // loading ... efeito de carregando
     const [loading, setLoading] = useState(false);
 
     // Burcar tudo
-    const fetchItemsList = async () => {
+    const fetchItems = async () => {
         setLoading(true);
         try {
             // executa oq precisa, se der erro entra no catch
-            const response = await fetch(`${BASE_URL}/compras`); // await: aguarda a resposta antes de ir pra proxima linha
+            const response = await fetch(`${BASE_URL}/items`); // await: aguarda a resposta antes de ir pra proxima linha
             const data = await response.json(); // converte a resposta em JSON
             console.log(JSON.stringify(data)); // debug
-            setShoppingList(data); // atualiza o estado com os dados recebidos
+            setItems(data); // atualiza o estado com os dados recebidos
         } catch (error) {
             // quando ocorre algum erro
-            console.error('Error fetching shopping:', error);
+            console.error('Error fetching items:', error);
         }
         finally {
             setLoading(false);
@@ -44,26 +42,25 @@ export default function App() {
     }
 
     useEffect(() => {
-        fetchItemsList()
+        fetchItems()
     }, []); // [] significa que o efeito só roda uma vez, quando o componente é montado
 
     // Create
     const addItem = async () => {
-        if (name.trim() === '' || amount.toString().trim() === '') {
+        if (text.trim() === '') {
             return;
         }
         try {
-            const response = await fetch(`${BASE_URL}/compras`, {
+            const response = await fetch(`${BASE_URL}/items`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: name.trim(), amount: parseInt(amount) }),
+                body: JSON.stringify({text: text.trim()}),
             })
             if (response.ok) {
-                await fetchItemsList(); // Atualiza a lista de itens após adicionar
-                setName(''); // Limpa o campo de texto
-                setAmount(null); // Reseta a quantidade para 1
+                await fetchItems(); // Atualiza a lista de itens após adicionar
+                setText(''); // Limpa o campo de texto
             } else {
                 console.error('Failed to add items:', response.status);
             }
@@ -76,18 +73,17 @@ export default function App() {
     // Update
     const updateItem = async (id) => {
         try {
-            const response = await fetch(`${BASE_URL}/compras/${id}`, {
+            const response = await fetch(`${BASE_URL}/items/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: editItemName, amount: editItemAmount }),
+                body: JSON.stringify({ text: editItemText }),
             });
              if (response.ok) {
-                await fetchItemsList(); // Atualiza a lista de itens após editar
+                await fetchItems(); // Atualiza a lista de itens após editar
                 setEditItemId(null);
-                setEditItemName('');
-                setEditItemAmount(null);
+                setEditItemText('');
             } else {
                 console.error('Failed to update item:', response.status);
             }
@@ -109,13 +105,13 @@ export default function App() {
                     onPress: async () => {
                         try {
                             const response = await fetch(
-                                `${BASE_URL}/compras/${id}`,
+                                `${BASE_URL}/items/${id}`,
                                 {
                                     method: 'DELETE',
                                 }
                             );
                             if (response.ok) {
-                                await fetchItemsList(); // Atualiza a lista de itens após deletar
+                                await fetchItems(); // Atualiza a lista de itens após deletar
                             } else {
                                 console.error(
                                     'Failed to delete item:',
@@ -137,10 +133,7 @@ export default function App() {
         if (item.id != editItemId) {
             return (
                 <View style={styles.item}>
-                    <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                        <Text style={styles.itemText}>Item: {item.name}</Text>
-                        <Text style={styles.itemText}>Amount: {item.amount}</Text>
-                    </View>
+                    <Text style={styles.itemText}>{item.text}</Text>
                     <View style={styles.buttons}>
                         <Button
                             title="Edit"
@@ -160,52 +153,37 @@ export default function App() {
         } else {
             // Um item está sendo editado
             return (
-                <View style={styles.item}>
-                    <TextInput
-                        placeholder="Name"
-                        style={styles.editInput}
-                        onChangeText={setEditItemName}
-                        value={editItemName}
-                        autoFocus
-                    />
-                    <TextInput
-                        placeholder="Amount"
-                        style={styles.editInput}
-                        onChangeText={setEditItemAmount}
-                        value={editItemAmount}
-                        autoFocus
-                    />
-                    <Button
-                        title="Update"
-                        onPress={() => updateItem(item.id)}
-                        color={'pink'}
-                    ></Button>
-                </View>
-            );
+              <View style={styles.item}>
+                <TextInput
+                  style={styles.editInput}
+                  onChangeText={setEditItemText}
+                  value={editItemText} 
+                  autoFocus />
+                  <Button title='Update' onPress={() => updateItem(item.id)} color={'pink'}></Button>
+              </View>
+            )
         }
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Shopping List</Text>
             <TextInput
                 style={styles.input}
-                value={name}
-                onChangeText={setName}
-                placeholder="Enter name item"
-            />
-            <TextInput
-                style={styles.input}
-                value={amount}
-                onChangeText={setAmount}
-                placeholder="Enter amount item"
+                value={text}
+                onChangeText={setText}
+                placeholder="Enter text item"
             />
             <Button title="Add Item" onPress={addItem} color={'pink'} />
             <FlatList
-                data={shoppingList}
+                data={items}
                 renderItem={renderItem} // cada item da lista (items) vai ser processado
                 keyExtractor={(item) => item.id} // retorna o id do item
                 style={styles.list}
+            />
+            <Text style={styles.text}>Hello World!</Text>
+            <Image
+                source={{ uri: 'https://picsum.photos/200' }}
+                style={{ width: 200, height: 200 }}
             />
 
             <StatusBar style="auto" />
@@ -225,9 +203,6 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         fontFamily: 'cursive',
-        textAlign: 'center',
-        color: '#B03060',
-        margin: 10
     },
     buttonContainer: {
         marginTop: 12,
@@ -268,3 +243,5 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
 });
+
+// onPress = OnClick
