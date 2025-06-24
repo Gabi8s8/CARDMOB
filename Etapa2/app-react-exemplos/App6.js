@@ -11,19 +11,17 @@ import {
     Alert,
 } from 'react-native';
 
-// Indicar o endereço do backend
-const BASE_URL = 'http://10.81.205.28:5000';
+// Indicar o enderço do backend
+const BASE_URL = 'http://10.81.205.28:3000';
 
 export default function App() {
     // CRUD em memória
-    const [productList, setProductList] = useState([]);
+    const [shoppingList, setShoppingList] = useState([]);
     const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [price, setPrice] = useState(null);
+    const [amount, setAmount] = useState(null);
     const [editItemId, setEditItemId] = useState(null);
     const [editItemName, setEditItemName] = useState('');
-    const [editItemDescription, setEditItemDescription] = useState('');
-    const [editItemPrice, setEditItemPrice] = useState(null);
+    const [editItemAmount, setEditItemAmount] = useState(null);
     // loading ... efeito de carregando
     const [loading, setLoading] = useState(false);
 
@@ -32,13 +30,13 @@ export default function App() {
         setLoading(true);
         try {
             // executa oq precisa, se der erro entra no catch
-            const response = await fetch(`${BASE_URL}/api/catalog`); // await: aguarda a resposta antes de ir pra proxima linha
+            const response = await fetch(`${BASE_URL}/compras`); // await: aguarda a resposta antes de ir pra proxima linha
             const data = await response.json(); // converte a resposta em JSON
             console.log(JSON.stringify(data)); // debug
-            setProductList(data.catalog); // atualiza o estado com os dados recebidos
+            setShoppingList(data); // atualiza o estado com os dados recebidos
         } catch (error) {
             // quando ocorre algum erro
-            console.error('Error fetching products:', error);
+            console.error('Error fetching shopping:', error);
         }
         finally {
             setLoading(false);
@@ -51,26 +49,21 @@ export default function App() {
 
     // Create
     const addItem = async () => {
-        if (name.trim() === '' || description.toString().trim() === '' || price.toString().trim() === '') {
+        if (name.trim() === '' || amount.toString().trim() === '') {
             return;
         }
         try {
-            const response = await fetch(`${BASE_URL}/api/catalog`, {
+            const response = await fetch(`${BASE_URL}/compras`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    name: name.trim(),
-                    description: description.trim(),
-                    price: parseInt(price),
-                }),
-            });
+                body: JSON.stringify({ name: name.trim(), amount: parseInt(amount) }),
+            })
             if (response.ok) {
                 await fetchItemsList(); // Atualiza a lista de itens após adicionar
                 setName(''); // Limpa o campo de texto
-                setDescription(null); // Reseta a quantidade para 1
-                setPrice(null); // Reseta o preço para 0
+                setAmount(null); // Reseta a quantidade para 1
             } else {
                 console.error('Failed to add items:', response.status);
             }
@@ -83,23 +76,18 @@ export default function App() {
     // Update
     const updateItem = async (id) => {
         try {
-            const response = await fetch(`${BASE_URL}/api/catalog/${id}`, {
-                method: 'PATCH',
+            const response = await fetch(`${BASE_URL}/compras/${id}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    name: editItemName,
-                    description: editItemDescription,
-                    price: parseInt(editItemPrice),
-                }),
+                body: JSON.stringify({ name: editItemName, amount: editItemAmount }),
             });
              if (response.ok) {
                 await fetchItemsList(); // Atualiza a lista de itens após editar
                 setEditItemId(null);
                 setEditItemName('');
-                setEditItemDescription('');
-                setEditItemPrice(null);
+                setEditItemAmount(null);
             } else {
                 console.error('Failed to update item:', response.status);
             }
@@ -121,7 +109,7 @@ export default function App() {
                     onPress: async () => {
                         try {
                             const response = await fetch(
-                                `${BASE_URL}/api/catalog/${id}`,
+                                `${BASE_URL}/compras/${id}`,
                                 {
                                     method: 'DELETE',
                                 }
@@ -150,22 +138,14 @@ export default function App() {
             return (
                 <View style={styles.item}>
                     <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                        <Text style={styles.itemTextTitle}>{item.name}</Text>
-                        <Text style={styles.itemText}>{item.description}</Text>
-                        <Text style={styles.itemText}>R${item.price}</Text>
-                        <Image
-                            source={{ uri: item.image }}
-                            style={{ width: 150, height: 150 }}
-                        />
+                        <Text style={styles.itemText}>Item: {item.name}</Text>
+                        <Text style={styles.itemText}>Amount: {item.amount}</Text>
                     </View>
                     <View style={styles.buttons}>
                         <Button
                             title="Edit"
                             onPress={() => {
                                 setEditItemId(item.id);
-                                setEditItemName(item.name);
-                                setEditItemDescription(item.description);
-                                setEditItemPrice(item.price.toString());
                             }}
                             color={'pink'}
                         ></Button>
@@ -182,22 +162,18 @@ export default function App() {
             return (
                 <View style={styles.item}>
                     <TextInput
-                        placeholder="Nome"
+                        placeholder="Name"
                         style={styles.editInput}
                         onChangeText={setEditItemName}
                         value={editItemName}
+                        autoFocus
                     />
                     <TextInput
-                        placeholder="Descrição"
+                        placeholder="Amount"
                         style={styles.editInput}
-                        onChangeText={setEditItemDescription}
-                        value={editItemDescription}
-                    />
-                    <TextInput
-                        placeholder="Preço"
-                        style={styles.editInput}
-                        onChangeText={setEditItemPrice}
-                        value={editItemPrice}
+                        onChangeText={setEditItemAmount}
+                        value={editItemAmount}
+                        autoFocus
                     />
                     <Button
                         title="Update"
@@ -211,29 +187,22 @@ export default function App() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Product List</Text>
+            <Text style={styles.text}>Shopping List</Text>
             <TextInput
                 style={styles.input}
                 value={name}
                 onChangeText={setName}
-                placeholder="Nome"
+                placeholder="Enter name item"
             />
             <TextInput
                 style={styles.input}
-                value={description}
-                onChangeText={setDescription}
-                placeholder="Descrição"
+                value={amount}
+                onChangeText={setAmount}
+                placeholder="Enter amount item"
             />
-            <TextInput
-                style={styles.input}
-                value={price}
-                onChangeText={setPrice}
-                placeholder="Preço"
-                keyboardType="numeric" // para aceitar apenas números
-            />
-            <Button title="Incluir produto" onPress={addItem} color={'pink'} />
+            <Button title="Add Item" onPress={addItem} color={'pink'} />
             <FlatList
-                data={productList}
+                data={shoppingList}
                 renderItem={renderItem} // cada item da lista (items) vai ser processado
                 keyExtractor={(item) => item.id} // retorna o id do item
                 style={styles.list}
@@ -258,7 +227,12 @@ const styles = StyleSheet.create({
         fontFamily: 'cursive',
         textAlign: 'center',
         color: '#B03060',
-        margin: 10,
+        margin: 10
+    },
+    buttonContainer: {
+        marginTop: 12,
+        flexDirection: 'row',
+        gap: 10,
     },
     input: {
         height: 40,
@@ -266,44 +240,25 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 10,
         paddingHorizontal: 10,
-        borderRadius: 8,
-        backgroundColor: '#f9f9f9',
     },
     list: {
         marginTop: 20,
     },
     item: {
+        flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 15,
-        padding: 15,
-        backgroundColor: '#fff0f6',
-        borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        marginBottom: 10,
+        padding: 10,
+        backgroundColor: '#f0f0f0',
+        borderRadius: 5,
     },
     itemText: {
-        fontSize: 16,
-        color: '#333',
-        marginBottom: 5,
-        textAlign: 'left',
-        fontWeight: '500',
-    },
-    itemTextTitle: {
-        fontSize: 28,
-        fontFamily: 'cursive',
-        color: '#8B2252',
-        marginBottom: 5,
-        textAlign: 'left',
-        fontWeight: 'bold',
+        flex: 1,
+        marginRight: 10,
     },
     buttons: {
         flexDirection: 'row',
-        gap: 8,
-        margin: 10,
     },
     editInput: {
         flex: 1,
@@ -311,8 +266,5 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         borderWidth: 1,
         paddingHorizontal: 10,
-        borderRadius: 8,
-        backgroundColor: '#f9f9f9',
-        marginBottom: 5,
     },
 });

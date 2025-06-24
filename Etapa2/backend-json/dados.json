@@ -1,20 +1,5 @@
 {
   "items": [],
-  "compras": [
-    {
-      "id": "6811",
-      "name": "frango",
-      "amount": 6
-    },
-    {
-      "name": "carne",
-      "amount": "2",
-      "id": "47ea"
-    },
-    {
-      "name": "arroz",
-      "amount": "1",
-      "id": "5f8e"
-    }
-  ]
+  "compras": [],
+  "listas": []
 }
