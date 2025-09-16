@@ -4,28 +4,24 @@ import { View, Text, Image, StyleSheet, Button } from 'react-native';
 const CatalogCard = ({ product, onBuyPress }: any) => {
     return (
         <View style={styles.card}>
-            <Image 
-                source={{ uri: product.image }} 
-                style={styles.image}
-            />
+            <Image source={{ uri: product.image }} style={styles.image} />
             <View style={styles.details}>
                 <Text style={styles.name}>{product.name}</Text>
                 <Text style={styles.description}>{product.description}</Text>
                 <Text style={styles.price}>R$ {product.price.toFixed(2)}</Text>
                 <View style={styles.buttonsContainer}>
-                    <Button 
-                        title="Comprar" 
-                        color="#28A745"
+                    <Button
+                        title="Comprar"
+                        color="#28a745"
                         onPress={onBuyPress}
                     />
                 </View>
-            /</View>
+            </View>
         </View>
-    )
-}
+    );
+};
 
 export default CatalogCard;
-
 
 const styles = StyleSheet.create({
     card: {
@@ -39,10 +35,32 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         elevation: 3,
     },
-    image: {},
-    details: {},
-    name: {},
-    description: {},
-    price: {},
-    buttonsContainer: {},
-})
+    image: {
+        width: '100%',
+        height: 200,
+        borderRadius: 8,
+        borderWidth: 2,
+        borderColor: '#ddd',
+    },
+    details: {
+        paddingHorizontal: 10,
+    },
+    name: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    description: {
+        fontSize: 14,
+        color: '#555',
+    },
+    price: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#28A745',
+        marginVertical: 10,
+    },
+    buttonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+});
