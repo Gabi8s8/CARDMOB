@@ -5,9 +5,10 @@ import { useShop } from '../../contexts/ShopContext';
 
 const CartItem = ({ item }: any) => {
     //Para fazer: implementar o context para persistir dados do carrinho
-    const { addToCart } = useShop();
+    const { addToCart, removeFromCart } = useShop();
 
-    const handleRemove = () => {
+    const handleRemove = (item: any) => {
+        removeFromCart(item.id)
         console.log('item excluído');
     };
 
@@ -21,7 +22,7 @@ const CartItem = ({ item }: any) => {
                         R$ {(item.price * item.quantity).toFixed(2)}
                     </Text>
                     <TouchableOpacity
-                        onPress={() => addToCart(item)}
+                        onPress={() => addToCart(item, -1)}
                         style={styles.button}
                     >
                         <Text style={styles.buttonText}>-</Text>
@@ -34,7 +35,7 @@ const CartItem = ({ item }: any) => {
                         <Text style={styles.buttonText}>+</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => handleRemove()}
+                        onPress={() => handleRemove(item)}
                         style={styles.button}
                     >
                         <Text style={styles.buttonText}>Remover</Text>
