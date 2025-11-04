@@ -1,76 +1,69 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet, TextInput } from 'react-native';
+import React, { useState } from 'react';
+import {
+    View,
+    TextInput,
+    Button,
+    StyleSheet,
+    Text,
+    SafeAreaView,
+} from 'react-native';
+
+import { requestRegister } from '../services/authService'; // modificado
+// import { useAuth } from "../contexts/AuthContext";
 
 export default function RegisterScreen({ navigation }: any) {
-    const [name, setName] = React.useState('');
-    const [email, setEmail] = React.useState('');
-    const [password, setPassword] = React.useState('');
+    const [name, setName] = useState(''); // novo
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    // const { login } = useAuth();
 
-    function handleSubmit() {
-        const userData = {
-            name,
-            email,
-            password,
-        };
-        console.log('Dados do usuário:', userData);
-
-        fetch('http://10.81.205.28:5000/api/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    return response.text().then((text) => {
-                        throw new Error(
-                            `Erro da API: ${response.status} - ${text}`
-                        );
-                    });
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log('Usuário cadastrado:', data);
-                alert('Cadastro realizado!');
-                setName('');
-                setEmail('');
-                setPassword('');
-            })
-            .catch((error) => {
-                console.error('Erro ao cadastrar usuário:', error);
-                alert('Erro ao realizar o cadastro, tente novamente.');
-            });
-    }
+    const handleRegister = async () => {
+        try {
+            // Lógica de cadastro / conexão com backend.
+            const token = await requestRegister(name, email, password); // modificado
+            // login(token);
+            console.log('Cadastro ok'); // modificado
+            // navigation.navigate('Login');
+        } catch (err: any) {
+            setError(err);
+        }
+    };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Cadastro de usuário</Text>
-            <Text>Nome:</Text>
-            <TextInput
-                style={styles.input}
-                value={name}
-                onChangeText={setName}
-                autoCapitalize="none"
-            />
-            <Text>Email:</Text>
-            <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize="none"
-            />
-            <Text>Senha:</Text>
-            <TextInput
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry // para ocultar a senha
-            />
-
-            <Button title="Cadastrar" onPress={handleSubmit} />
-        </View>
+        <SafeAreaView style={styles.container}>
+            <View>
+                {/* Novo campo "nome" */}
+                <Text>Nome:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={name}
+                    onChangeText={setName}
+                    autoCapitalize="none"
+                />
+                <Text>Email:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={email}
+                    onChangeText={setEmail}
+                    autoCapitalize="none"
+                />
+                <Text>Senha:</Text>
+                <TextInput
+                    style={styles.input}
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                />
+                {error ? <Text style={{ color: 'red' }}>{error}</Text> : null}
+                {/* botões modificados */}
+                <Button title="Cadastrar" onPress={handleRegister} />
+                <Button
+                    title="Já tem conta ? Faça o Login"
+                    onPress={() => navigation.navigate('Login')}
+                />
+            </View>
+        </SafeAreaView>
     );
 }
 
@@ -86,10 +79,4 @@ const styles = StyleSheet.create({
         padding: 8,
         marginBottom: 12,
     },
-    title: {
-        textAlign: 'center',
-        fontFamily: 'cursive',
-        fontSize: 28,
-        margin: 10,
-    }
 });

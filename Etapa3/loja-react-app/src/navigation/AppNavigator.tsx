@@ -20,33 +20,44 @@ const Tab = createBottomTabNavigator<TabParamList>();
 function TabNavigator() {
     return (
         <Tab.Navigator
-            screenOptions={({ route, navigation}) => ({
+            screenOptions={({ route, navigation }) => ({
                 tabBarIcon: ({ color, focused, size }) => {
                     let iconName;
-                if (route.name === 'Catalog') {
-                    iconName = focused ? 'tags' : 'tags';
-                }
-                if (route.name === 'Cart') {
-                    iconName = focused ? 'shopping-cart' : 'shopping-cart';
-                }
-                return <FontAwesome name={iconName} size={size} color={color} />;
+                    if (route.name === 'Catalog') {
+                        iconName = focused ? 'tags' : 'tags';
+                    }
+                    if (route.name === 'Cart') {
+                        iconName = focused ? 'shopping-cart' : 'shopping-cart';
+                    }
+                    return (
+                        <FontAwesome
+                            name={iconName}
+                            size={size}
+                            color={color}
+                        />
+                    );
                 },
                 tabBarActiveTintColor: 'red',
                 tabBarInactiveTintColor: 'gray',
                 headerShown: false,
-            })}>
-            <Tab.Screen 
-                name="Catalog" 
+            })}
+        >
+            <Tab.Screen
+                name="Catalog"
                 component={CatalogScreen}
-                options={{ title: 'Menu' }} 
+                options={{ title: 'Menu' }}
             />
             <Tab.Screen
-                name="Cart" 
-                component={CartScreen} 
+                name="Cart"
+                component={CartScreen}
                 options={{ title: 'Seu Carrinho', headerShown: true }}
             />
             <Tab.Screen name="Settings" component={HomeScreen} />
-            <Tab.Screen name="Register" component={RegisterScreen} />
+            <Tab.Screen
+                name="Register"
+                component={RegisterScreen}
+                options={{ title: 'Cadastrar', headerShown: true }} // novo
+            />
         </Tab.Navigator>
     );
 }
