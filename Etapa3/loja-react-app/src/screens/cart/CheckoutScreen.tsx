@@ -13,8 +13,10 @@ import {
 
 import { useShop } from '../../contexts/ShopContext';
 
+import { postOrder } from '../../services/catalogService';
+
 const CheckoutScreen = ({ navigation }: any) => {
-    const { getTotalPrice } = useShop();
+    const { getTotalPrice, clearCart, cartItems } = useShop();
     const [ phone, setPhone ] = useState('');
     const [ address, setAddress ] = useState('');
     const [ customer, setCustomer ] = useState('');
@@ -28,9 +30,12 @@ const CheckoutScreen = ({ navigation }: any) => {
         };
         // enviar para o backend
         // todo: implementar o serviço de "checkout"
+        const orderInfo = await postOrder(customerInfo, cartItems);
         alert('Pedido confirmado!');
         clearCart();
-        navigation.navigate('Catalog');
+        console.log(customerInfo);
+        // navigation.navigate('Catalog');
+        navigation.replace('Tabs', {screen: 'Catalog'});
     };
 
     return (
